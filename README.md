@@ -1,6 +1,6 @@
 # lottery --- WIP
 
-## Project idea
+# Project idea
 
     This came out as a university project which is supposed to demonstrate you that is almost impossible for you to win the biggest prize in lottery since you have to guess, in some kind of magic , all 6 winning numbers.
     
