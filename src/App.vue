@@ -1,7 +1,6 @@
 <template>
   <div  id="app">
     <v-app app>
-      {{intersection.length}}
       <v-container>
           <v-row no-gutters>
           <v-col cols="12" align="center">
@@ -93,11 +92,11 @@
                   </tr>
                    <tr>
                     <td>Castig/Pierdere:</td>
-                    <td>{{money}} LEI</td>
+                    <td>{{(money).toFixed(2)}} LEI</td>
                   </tr> 
                    <tr>
                     <td>Ani:</td>
-                    <td>{{drawings/52.1774}}</td>
+                    <td>{{(drawings/52.17).toFixed(2)}}</td>
                   </tr> 
                 </tbody>
             </v-simple-table>
