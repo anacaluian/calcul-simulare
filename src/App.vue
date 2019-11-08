@@ -24,53 +24,27 @@
             </v-card>
           </v-col>
         </v-row>
-
-<br>
-
-        <v-row no-gutters justify="space-around">
-          <v-col cols="4" >
-            <v-simple-table>
-              <thead>
-                  <tr>
-                    <th>Categorie</th>
-                     <th>Nr. castiguri</th>
-                    <th>Castig</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Cat. I (6/6)</td>
-                     <td>{{cat1}}</td>
-                    <td>692.051,04 LEI</td>
-                  </tr>
-                   <tr>
-                    <td>Cat. II (5/6)</td>
-                    <td>{{cat2}}</td>
-                    <td>76.894,56 LEI</td>
-                  </tr>
-                   <tr>
-                    <td>Cat. III (4/6)</td>
-                    <td>{{cat3}}</td>
-                    <td>555,86 LEI</td>
-                  </tr>
-                   <tr>
-                    <td>Cat. IV (3/6)</td>
-                    <td>{{cat4}}</td>
-                    <td>30 LEI</td>
-                  </tr>
-                </tbody>
-            </v-simple-table>
+        <v-row>
+           <v-col cols="12" align="center">
+              <input class="form-check-input" type="checkbox" v-model="same" id="defaultCheck1"> Selecteaza daca vrei sa pastrezi aceleasi numere la fiecare extragere.
            </v-col>
+        </v-row>
 
-           <v-col align="center" justify="center" cols="2">
+        <br>
+        <v-row no-gutters justify="center">
+           <v-col class="mx-4" align="center" justify="center" cols="12">
              <v-card>
                <v-card-text>
+                 <v-row justify="center">
+               <v-col class="mx-4" align="center" justify="center" cols="6">
                     <v-select
                     v-model="selectedSpeed"
                     :items="['incet','repede','super_repede']"
                     filled
                     label="Viteza"
                   ></v-select>
+               </v-col>
+             </v-row>
                   <v-btn @click="start" class="btn" justify="center" rounded color="#1A1AFF" dark>Start</v-btn>
                   <v-btn @click="stop" class="btn" align-self="center" rounded color="#e60000" dark>Stop</v-btn>
                   <v-btn @click="reset"  class="btn" align-self="center" rounded color="#610483" dark>Reset</v-btn>
@@ -78,8 +52,58 @@
              </v-card>
            </v-col>
 
-           <v-col cols="4">
-            <v-simple-table>
+        </v-row>
+        <br>
+
+        <v-row no-gutters>
+          <v-col class="mx-4" cols="6" >
+            <v-simple-table dark>
+              <thead>
+                  <tr>
+                    <th>Categorie</th>
+                     <th>Nr. castiguri</th>
+                    <th>Castig</th>
+                    <th>Proportii</th>
+                    <th>Probabilitate aprox.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Cat. I (6/6)</td>
+                     <td>{{cat1}}</td>
+                    <td>692.051,04 LEI</td>
+                    <td>{{ cat1 > 0 ? (100*cat1/drawings).toFixed(2) : 0}}</td>
+                    <td><sup>1</sup>&frasl;<sup> 13983816</sup> </td>
+                  </tr>
+                   <tr>
+                    <td>Cat. II (5/6)</td>
+                    <td>{{cat2}}</td>
+                    <td>76.894,56 LEI</td>
+                    <td>{{ cat2 > 0 ? (100*cat2/drawings).toFixed(2) : 0}}</td>
+                    <td><sup>1</sup>&frasl;<sup> 54200</sup> </td>
+
+                  </tr>
+                   <tr>
+                    <td>Cat. III (4/6)</td>
+                    <td>{{cat3}}</td>
+                    <td>555,86 LEI</td>
+                    <td>{{ cat3 > 0 ? (100*cat3/drawings).toFixed(2) : 0}}</td>
+                    <td><sup>1</sup>&frasl;<sup> 1032</sup> </td>
+                  </tr>
+                   <tr>
+                    <td>Cat. IV (3/6)</td>
+                    <td>{{cat4}}</td>
+                    <td>30 LEI</td>
+                    <td>{{ cat4 > 0 ? (100*cat4/drawings).toFixed(2) : 0}}</td>
+                    <td><sup>1</sup>&frasl;<sup> 56.66</sup></td>
+                  </tr>
+                </tbody>
+            </v-simple-table>
+           </v-col>
+
+
+           <v-col class="mx-4" cols="4">
+            <v-simple-table dark>
               <thead>
                   <tr>
                     <th>Sumar</th>
@@ -103,6 +127,27 @@
            </v-col>
         </v-row>
 
+<br>
+        <v-row no-gutters justify="space-around">
+          <v-col cols="6" >
+            <v-simple-table dark>
+              <thead>
+                  <tr>
+                    <th>Raport castig/an</th>
+                     <th>Pierderi</th>
+                    <th>Castiguri</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(year,index) in yearProbabilityValue" v-bind:key="year">
+                    <td>{{year}}</td>
+                    <td>{{win_loss[index]['0']}}</td>
+                    <td>{{win_loss[index]['1']}}</td>
+                  </tr>
+                </tbody>
+            </v-simple-table>
+           </v-col>
+        </v-row>
       </v-container>
     </v-app>
   </div>
@@ -113,6 +158,11 @@ import NumberChip from './components/NumberChip';
 export default {
     data(){
         return {
+          win_loss:[],
+          yearProbability:[],
+          yearProbabilityValue:[],
+          started:false,
+          same:false,
           speed:[
             ['incet',1000],
             ['repede',400],
@@ -137,11 +187,14 @@ this.winning = this.generateNumbers();
 },
 methods:{
   start(){
-    var self = this;
+    if(!this.started){
+var self = this;
     window.startInterval = setInterval(function(){
       self.drawings ++;
       self.money -=5.10;
+      if(!self.same){
       self.ticket = self.generateNumbers();
+      }
       self.winning = self.generateNumbers();
       self.intersection = self.$collect(self.ticket).intersect(self.winning).all();
       var speedy = self.$collect(self.speed).where('0','=',self.selectedSpeed).pluck('1').first();
@@ -183,14 +236,35 @@ methods:{
          
           break;
       }
+
+      if(self.yearProbability.length == 48){
+          let draws = self.$collect(self.yearProbability).countBy().all();
+          self.win_loss.push(draws);
+          let loses = self.$collect(draws).first();
+          let wins = 48 - loses;
+          self.yearProbabilityValue.push((100 * wins)/48);
+      }
+         if(self.yearProbability.length < 48){
+        if(self.intersection.length >= 3){
+          self.yearProbability.push(1);
+        }else{
+           self.yearProbability.push(0);
+        }
+      }else{
+        self.yearProbability.length = 0;
+      }
     
     },self.$collect(self.speed).where('0','=',self.selectedSpeed).pluck('1').first());
+    this.started = true;
+    }  
   },
   stop(){
     clearInterval(window.startInterval);
+    this.started = false;
   },
   reset(){
      clearInterval(window.startInterval);
+      this.started = false;
       this.cat1 = 0;
       this.cat2 = 0;
       this.cat3 = 0;
@@ -198,6 +272,10 @@ methods:{
       this.drawings = 0;
       this.money = 0;
       this.intersection = [];
+      this.yearProbabilityValue.length = 0;
+      this.yearProbability.length = 0;
+      this.win_loss.length = 0;
+
   },
   checkWin(){
  
@@ -220,5 +298,17 @@ components:{NumberChip}
 <style scoped>
 .btn{
   margin: 10px;
+}
+.f {
+    display: inline-block;
+    width: 1em;
+}
+.n {
+    text-align: center;
+    border-bottom: 1px solid black; 
+}
+
+.d {
+    text-align: center;
 }
 </style>

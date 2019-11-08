@@ -22,6 +22,7 @@ import Vuetify, {
   VRow,
   VCol,
   VSimpleTable,
+  VCheckbox,
   VSelect,
   VApp,
 } from 'vuetify/lib';
@@ -45,6 +46,7 @@ Vue.use(Vuetify, {
       VRow,
       VCol,
       VSimpleTable,
+      VCheckbox,
       VSelect,
       VApp,
   },
